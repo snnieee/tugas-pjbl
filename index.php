@@ -29,6 +29,10 @@
 
             <button type="submit">Kirim Pesan ➜</button>
         </form>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="daftar_tamu.php" style="color: #89cff0; text-decoration: none; font-size: 0.9rem;">📋 Lihat Daftar Tamu</a>
+        </div>
     </div>
 </body>
 </html>

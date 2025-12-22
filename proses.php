@@ -17,10 +17,18 @@
 
             // Validasi sederhana (jika diperlukan tambahan selain 'required' di HTML)
             if (!empty($nama) && !empty($email) && !empty($pesan)) {
+                // MENYIMPAN DATA KE FILE TEXT (bukutamu.txt)
+                $file = 'bukutamu.txt';
+                $tanggal = date("Y-m-d H:i:s");
+                // Format data: Waktu | Nama | Email | Pesan (pemisah menggunakan pipe |)
+                $data_entry = "$tanggal | $nama | $email | $pesan" . PHP_EOL;
+                
+                // Menambahkan data ke file (FILE_APPEND agar tidak menimpa data lama)
+                file_put_contents($file, $data_entry, FILE_APPEND | LOCK_EX);
         ?>
-                <h2>🎉 Pesan Diterima!</h2>
+                <h2>🎉 Pesan Diterima & Disimpan!</h2>
                 <p style="text-align: center; color: #718096; margin-bottom: 20px;">
-                    Terima kasih telah menghubungi kami. Berikut adalah data yang Anda kirimkan:
+                    Terima kasih telah menghubungi kami. Data Anda telah berhasil disimpan.
                 </p>
                 
                 <div class="result-card">
@@ -40,7 +48,10 @@
                     </div>
                 </div>
 
-                <a href="index.php" class="back-btn">← Kembali ke Form</a>
+                <div style="margin-top: 20px; text-align: center;">
+                    <a href="daftar_tamu.php" class="back-btn" style="display: inline-block; margin-right: 10px;">📋 Lihat Daftar Tamu</a>
+                    <a href="index.php" class="back-btn" style="display: inline-block;">← Kembali ke Form</a>
+                </div>
         <?php
             } else {
                 // Jika ada data kosong
