@@ -40,18 +40,16 @@
     <div class="container">
         <h2>📋 Daftar Buku Tamu</h2>
         <p style="text-align: center; margin-bottom: 20px; color: #718096;">
-            Berikut adalah pesan yang telah tersimpan di sistem (File: bukutamu.txt).
+            Berikut adalah pesan yang telah tersimpan di Database MySQL.
         </p>
 
         <?php
-        $file = 'bukutamu.txt';
+        include 'koneksi.php';
 
-        if (file_exists($file) && filesize($file) > 0) {
-            $data = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            
-            // Urutkan dari yang terbaru (membalik array)
-            $data = array_reverse($data);
+        $sql = "SELECT * FROM tamu ORDER BY waktu DESC";
+        $result = $conn->query($sql);
 
+        if ($result->num_rows > 0) {
             echo "<table>";
             echo "<thead>
                     <tr>
@@ -63,31 +61,27 @@
                   </thead>";
             echo "<tbody>";
 
-            foreach ($data as $line) {
-                // Memecah string berdasarkan pemisah pipe |
-                $parts = explode(' | ', $line);
+            while($row = $result->fetch_assoc()) {
+                $waktu = htmlspecialchars($row['waktu']);
+                $nama = htmlspecialchars($row['nama']);
+                $email = htmlspecialchars($row['email']);
+                $pesan = htmlspecialchars($row['pesan']);
                 
-                // Pastikan data lengkap sebelum ditampilkan
-                if (count($parts) >= 4) {
-                    $waktu = htmlspecialchars($parts[0]);
-                    $nama = htmlspecialchars($parts[1]);
-                    $email = htmlspecialchars($parts[2]);
-                    $pesan = htmlspecialchars($parts[3]);
-                    
-                    echo "<tr>
-                            <td style='font-size: 0.85rem; color: #718096;'>$waktu</td>
-                            <td><strong>$nama</strong></td>
-                            <td>$email</td>
-                            <td>$pesan</td>
-                          </tr>";
-                }
+                echo "<tr>
+                        <td style='font-size: 0.85rem; color: #718096;'>$waktu</td>
+                        <td><strong>$nama</strong></td>
+                        <td>$email</td>
+                        <td>$pesan</td>
+                      </tr>";
             }
 
             echo "</tbody>";
             echo "</table>";
         } else {
-            echo "<div class='empty-message'>Belum ada data tamu yang tersimpan.</div>";
+            echo "<div class='empty-message'>Belum ada data tamu yang tersimpan di Database.</div>";
         }
+        
+        $conn->close();
         ?>
 
         <div style="margin-top: 30px; text-align: center;">

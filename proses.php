@@ -18,18 +18,20 @@
 
             // Validasi sederhana (jika diperlukan tambahan selain 'required' di HTML)
             if (!empty($nama) && !empty($email) && !empty($pesan)) {
-                // MENYIMPAN DATA KE FILE TEXT (bukutamu.txt)
-                $file = 'bukutamu.txt';
-                $tanggal = date("Y-m-d H:i:s");
-                // Format data: Waktu | Nama | Email | Pesan (pemisah menggunakan pipe |)
-                $data_entry = "$tanggal | $nama | $email | $pesan" . PHP_EOL;
-                
-                // Menambahkan data ke file (FILE_APPEND agar tidak menimpa data lama)
-                file_put_contents($file, $data_entry, FILE_APPEND | LOCK_EX);
+                // MENYIMPAN DATA KE DATABASE MYSQL
+                include 'koneksi.php';
+
+                $sql = "INSERT INTO tamu (nama, email, pesan) VALUES (?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sss", $nama, $email, $pesan);
+
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    $conn->close();
         ?>
                 <h2>🎉 Pesan Diterima & Disimpan!</h2>
                 <p style="text-align: center; color: #718096; margin-bottom: 20px;">
-                    Terima kasih telah menghubungi kami. Data Anda telah berhasil disimpan.
+                    Terima kasih telah menghubungi kami. Data Anda telah berhasil disimpan ke Database.
                 </p>
                 
                 <div class="result-card">
@@ -54,6 +56,11 @@
                     <a href="index.php" class="back-btn" style="display: inline-block;">← Kembali ke Form</a>
                 </div>
         <?php
+                } else {
+                    echo "<h2>⚠️ Gagal Menyimpan</h2>";
+                    echo "<p style='text-align:center;'>Terjadi kesalahan saat menyimpan ke database: " . $conn->error . "</p>";
+                    echo "<a href='index.php' class='back-btn'>← Kembali</a>";
+                }
             } else {
                 // Jika ada data kosong
                 echo "<h2>⚠️ Data Tidak Lengkap</h2>";
